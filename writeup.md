@@ -2,7 +2,6 @@
 
 ---
 
-**Finding Lane Lines on the Road**
 Author : Manoj Kumar Subramanian
 
 The goals / steps of this project are the following:
@@ -12,9 +11,9 @@ The goals / steps of this project are the following:
 
 ---
 
-### Reflection
+## Reflection
 
-# Startoff
+### Startoff
 My pipeline started of the following steps. 
 
 1. I started using the same sequences applied in the lecture videos on to the sample image to identify the Lanes on the image.
@@ -25,16 +24,16 @@ My pipeline started of the following steps.
 6. Sent the masked image to hough_lines function to obtain the Hough lines list from the masked area.
 7. Used the draw_lines function with the initial settings to draw the lines on to the image.
 
-# Initial observations
+### Initial observations
 1. The output had lots of lines drawn on to the original picture.
 2. The images were capturing multiple small lines outside the required lane lines
 3. The image contained dotted lanes, so the lines drawn were not joined
 
-# Corrections 1
+### Corrections 1
 1. Adjusted the trapezoid vertices to crop out for only the required portion
 2. Adjusted the parameters of Hough lines function to match for discarding smaller lines
 
-# Editing draw_lines averaging lines and Extrapolating
+### Editing draw_lines averaging lines and Extrapolating
 1. The lines were with X1,Y1,X2,Y2 co-ordinates. Identified to use slope method to segregate the left and right and started appending the lines to their respective lists for averaging.
 
 ```python
@@ -71,13 +70,13 @@ My pipeline started of the following steps.
     cv2.line(img, (int(Right_Lane_X1), int(Right_Lane_Y1)), (int(Right_Lane_X2), int(Right_Lane_Y2)), color, thickness)
 ```
 
-# Running on the video
+### Running on the video
 1. Put up all the sequences in a function draw_lane_pipeline and called the function from process_image function already defined.
 2. The lines started appearing - but 2 observations -
     a. The lines were not properly aligning on to the actual lane images in the video
     b. There were lots of jittery between the frames
     
-# Corrections 2
+### Corrections 2
 1. Logic added to put more weights to longer lines and shorter weight to smaller lines. This is done because, there were more number of smaller lines at the center of the image where the lane horizon is appearing which brings the slope converging towards flat lane line. When averaging without weights, the number of smaller lines adds up to bring the extrapolated line towards flat lane.
 
 ```python
@@ -88,20 +87,20 @@ My pipeline started of the following steps.
 ```
 2. The corrections were tested and the alignment issue was resolved.
 
-# Addressing jittery
+### Addressing jittery
 1. When run on the example videos, the line transitions were appearing jittery and not smooth between the frames.
 2. Since the function was being called on each frame, the better way to avoid jittering seemed to be having using global variables and run through an average among the frames.
 
-# Global variables and associated problems
+### Global variables and associated problems
 1. Inserted global variables to the project to store the predicted lane line parameters over a circular queue.
 2. Averaged out the queue to get a smooth curve between the frames.
 3. But since global variables were used, the buffers used by global variables remains active over different calling periods. Hence when completing one video and running another, the second video started off with the previous videos values and shifted towards the lanes over averaging.
 4. Hence introduced clear_buffer function to clear the global variables. This function needs to be called before using process_image for lane extraction from a new file.
 
-# Outputs
+### Outputs
 1. The outputs are stored in the test_videos_output folder.
 
-# Scope of Improvements
+### Scope of Improvements
 1. The lanes are curvy. Identifying the lanes as lines may not fit for most of the cases.
 2. There should be a better structured way to handle between multiple frames rather than using global variables directly.
 
